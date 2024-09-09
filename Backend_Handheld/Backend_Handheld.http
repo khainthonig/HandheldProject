@@ -1,0 +1,6 @@
+@Backend_Handheld_HostAddress = http://localhost:5006
+
+GET {{Backend_Handheld_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
