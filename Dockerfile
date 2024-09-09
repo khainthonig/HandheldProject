@@ -12,7 +12,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0-nanoserver-1809 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Backend_Handheld/Backend_Handheld.csproj", "Backend_Handheld/"]
-RUN dotnet restore "./Backend_Handheld/Backend_Handheld.csproj"
+RUN dotnet restore "./HandheldProject/Backend_Handheld/Backend_Handheld.csproj"
 COPY . .
 WORKDIR "/src/Backend_Handheld"
 RUN dotnet build "./Backend_Handheld.csproj" -c %BUILD_CONFIGURATION% -o /app/build
