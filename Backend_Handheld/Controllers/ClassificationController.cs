@@ -1,9 +1,11 @@
 ﻿using Backend_Handheld.Entities.Const;
 using Backend_Handheld.Entities.DataTransferObjects.Classification;
+using Backend_Handheld.Entities.DataTransferObjects.Result;
 using Backend_Handheld.Entities.DataTransferObjects.User;
 using Backend_Handheld.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Backend_Handheld.Controllers
 {

@@ -48,5 +48,28 @@ namespace Backend_Handheld.Controllers
             if (dto == null) return NoContent();
             return Ok(dto);
         }
+        [HttpPost("upload")]
+        public async Task<ActionResult> UploadImageResult([FromForm] ResultCreateDto resultDto, [FromForm] IFormFile file)
+        {
+            var uploadSuccess = await _serviceManager.ResultService.Upload(file);
+            if (!uploadSuccess)
+            {
+                return BadRequest("File upload failed.");
+            }
+
+            var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+            var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "Images", timestamp);
+            var filePath = Path.Combine(uploadPath, file.FileName);
+            resultDto.Image = filePath;
+
+            var createSuccess = await _serviceManager.ResultService.Create(resultDto);
+            if (!createSuccess)
+            {
+                return BadRequest("Failed to create result.");
+            }
+
+            return Ok("File uploaded and result created successfully.");
+        }
+
     }
 }
