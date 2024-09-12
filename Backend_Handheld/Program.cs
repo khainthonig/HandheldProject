@@ -16,7 +16,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddCors(option =>
 {
-    option.AddPolicy("policy", builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyHeader().AllowAnyMethod());
+    option.AddPolicy("policy", builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 });
 
 builder.Services.AddSingleton<IServiceManager, ServiceManager>();
@@ -29,8 +29,11 @@ var app = builder.Build();
 app.UseCors("policy");
 // Configure the HTTP request pipeline.
 
+if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
+{
     app.UseSwagger();
     app.UseSwaggerUI();
+}
 
 
 app.UseHttpsRedirection();

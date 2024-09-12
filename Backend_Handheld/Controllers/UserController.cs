@@ -55,5 +55,12 @@ namespace Backend_Handheld.Controllers
                 return BadRequest(MessageError.IncorrectPassword);
             return Ok(userLogin);
         }
+        [HttpGet("id={id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var dto = await _serviceManager.UserService.GetById(id);
+            if (dto == null) return BadRequest("No data.");
+            return Ok(dto);
+        }
     }
 }

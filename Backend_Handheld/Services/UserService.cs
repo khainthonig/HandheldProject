@@ -1,9 +1,11 @@
-﻿using Backend_Handheld.Entities.DataTransferObjects.User;
+﻿using Backend_Handheld.Entities.DataTransferObjects.Result;
+using Backend_Handheld.Entities.DataTransferObjects.User;
 using Backend_Handheld.Entities.Models;
 using Backend_Handheld.Repositories.Interfaces;
 using Backend_Handheld.Services.Interfaces;
 using Hangfire.PostgreSql.Utils;
 using Mapster;
+using System.Globalization;
 
 namespace Backend_Handheld.Services
 {
@@ -18,7 +20,7 @@ namespace Backend_Handheld.Services
         public async Task<bool> Create(UserCreateDto createUserDto)
         {
             var user = createUserDto.Adapt<User>();
-            user.CreatedDate = DateTime.UtcNow;         
+            user.CreatedDate = DateTime.Now;
             var result = await _repositoryManager.UserRepository.Create(user);
             if (result)
             {
@@ -35,9 +37,11 @@ namespace Backend_Handheld.Services
 
         }
 
-        public Task<UserDto> GetById(int id)
+        public async Task<UserDto> GetById(int id)
         {
-            throw new NotImplementedException();
+            var result = await _repositoryManager.UserRepository.GetById(id);
+            var resultDto = result.Adapt<UserDto>();
+            return resultDto;
         }
 
         public async Task<UserDto> Login(string username, string password)
@@ -60,7 +64,7 @@ namespace Backend_Handheld.Services
         }
         public async Task<List<UserDto>> FilterData(List<UserDto> lstUsers)
         {
-            return lstUsers;
+            return lstUsers.OrderByDescending(user => user.CreatedDate).ToList();
         }
 
         public async Task<UserDto> GetByUsername(string username)

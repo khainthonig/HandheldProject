@@ -48,9 +48,9 @@ namespace Backend_Handheld.Repositories
 
         public async Task<List<Classification>> Search(ClassificationSearchDto search)
         {
-            var selectSql = "SELECT * FROM public.classification";
+            var selectSql = "SELECT * FROM public.classification ";
 
-            var whereSql = " WHERE id is not null ";
+            var whereSql = " WHERE id is not null";
 
             if (search.Id != null)
             {
@@ -60,13 +60,9 @@ namespace Backend_Handheld.Repositories
             {
                 whereSql += " AND name = @Name";
             }
-            if (search.CreatedDate != null)
+            if (search.IdLst != null)
             {
-                whereSql += " AND created_date > @CreatedDate";
-            }
-            if (search.IdLst != null && search.IdLst.Any())
-            {
-                whereSql += " and id=ANY(@IdLst)";
+                whereSql += " AND id=ANY(@IdLst)";
             }
             var classificationLst = await _dbService.GetAll<Classification>(selectSql + whereSql, search);
 

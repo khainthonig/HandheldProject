@@ -2,6 +2,7 @@
 using Backend_Handheld.Entities.DataTransferObjects.Classification;
 using Backend_Handheld.Entities.DataTransferObjects.Result;
 using Backend_Handheld.Services.Interfaces;
+using HandheldProject.Entities.Enum;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -41,11 +42,11 @@ namespace Backend_Handheld.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpGet("get-result-by-id")]
+        [HttpGet("id={id}")]
         public async Task<IActionResult> GetById(int id)
         {
             var dto = await _serviceManager.ResultService.GetById(id);
-            if (dto == null) return NoContent();
+            if (dto == null) return BadRequest("No data.");
             return Ok(dto);
         }
         [HttpPost("upload")]
@@ -69,6 +70,46 @@ namespace Backend_Handheld.Controllers
             }
 
             return Ok("File uploaded and result created successfully.");
+        }
+
+        [HttpPost("upload-to-cloudinary")]
+        public async Task<ActionResult> UploadImageToCloudinary([FromForm] ResultCreateDto resultDto, [FromForm] IFormFile file)
+        {
+            var uploadResult = await _serviceManager.ResultService.UploadToCloudDinary(file);
+            if (uploadResult == null)
+            {
+                return BadRequest("File upload to Cloudinary failed.");
+            }
+            resultDto.Image = uploadResult.ToString();
+            var createSuccess = await _serviceManager.ResultService.Create(resultDto);
+            if (!createSuccess)
+            {
+                return BadRequest("Failed to create result.");
+            }
+            return Ok("File uploaded to Cloudinary and result created successfully.");
+        }
+
+
+        [HttpPost("search-by-condition")]
+        public async Task<IActionResult> SearchByCondition(ResultSearchDto searchDto)
+        {
+            var userId = searchDto.UserId;
+            var user = new Entities.DataTransferObjects.User.UserDto();
+            if(userId != null)
+            {
+                user = await _serviceManager.UserService.GetById((int)userId);
+            }
+            if(user.Role == (int)RoleUser.OPERATOR)
+            {
+                searchDto.UserId = userId;
+            }
+            else
+            {
+                searchDto.UserId = null;
+            }
+            var result = await _serviceManager.ResultService.GetListByCondition(searchDto);
+            if (result == null) return BadRequest("No data");         
+            return Ok(result);
         }
 
     }

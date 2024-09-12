@@ -4,6 +4,7 @@ using Backend_Handheld.Entities.Models;
 using Backend_Handheld.Repositories.Interfaces;
 using Backend_Handheld.Services.Interfaces;
 using Mapster;
+using System.Globalization;
 
 namespace Backend_Handheld.Services
 {
@@ -18,7 +19,8 @@ namespace Backend_Handheld.Services
         public async Task<bool> Create(ClassificationCreateDto createClassification)
         {
             var classification = createClassification.Adapt<Classification>();
-            classification.CreatedDate = DateTime.UtcNow;
+            string currentTime = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+            classification.CreatedDate = DateTime.SpecifyKind(DateTime.ParseExact(currentTime, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture), DateTimeKind.Local);
             var result = await _repositoryManager.ClassificationRepository.Create(classification);
             if (result)
             {
@@ -49,7 +51,7 @@ namespace Backend_Handheld.Services
         }
         public async Task<List<ClassificationDto>> FilterData(List<ClassificationDto> lst)
         {
-            return lst;
+            return lst.OrderByDescending(i => i.CreatedDate).ToList();
         }
     }
 }

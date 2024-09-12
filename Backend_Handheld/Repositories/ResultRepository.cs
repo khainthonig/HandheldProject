@@ -62,7 +62,7 @@ namespace Backend_Handheld.Repositories
             }
             if (search.CreatedDate != null)
             {
-                whereSql += " AND created_date > @CreatedDate";
+                whereSql += " AND DATE(created_date) = @CreatedDate";
             }
             var lst = await _dbService.GetAll<Result>(selectSql + whereSql, search);
 

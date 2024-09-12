@@ -43,11 +43,11 @@ namespace Backend_Handheld.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpGet("get-classification-by-id")]
+        [HttpGet("id={id}")]
         public async Task<IActionResult> GetById(int id)
         {
             var dto = await _serviceManager.ClassificationService.GetById(id);
-            if (dto == null) return NoContent();
+            if (dto == null) return BadRequest("No data.");
             return Ok(dto);
         }
     }

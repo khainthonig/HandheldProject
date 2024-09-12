@@ -60,7 +60,7 @@ namespace Backend_Handheld.Repositories
             user.Password = password;
             var selectSql = " SELECT * FROM public.user ";
 
-            var whereSql = " where id is not null ";
+            var whereSql = " where 0=0 ";
             if (!string.IsNullOrEmpty(username))
             {
                 whereSql += " and username=@Username ";
@@ -75,7 +75,7 @@ namespace Backend_Handheld.Repositories
 
         public async Task<List<User>> Search(UserSearchDto search)
         {
-            var selectSql = "SELECT * FROM public.user";
+            var selectSql = "SELECT * FROM public.user ";
 
             var whereSql = " WHERE id is not null ";
 
@@ -86,14 +86,10 @@ namespace Backend_Handheld.Repositories
             if (search.Username != null)
             {
                 whereSql += " AND username=@Username";
-            }
-            if (search.CreatedDate != null)
+            }   
+            if (search.IdLst != null)
             {
-                whereSql += " AND created_date > @CreatedDate";
-            }
-            if (search.IdLst != null && search.IdLst.Any())
-            {
-                whereSql += " and id=ANY(@IdLst)";
+                whereSql += " AND id=ANY(@IdLst)";
             }
             var userLst = await _dbService.GetAll<User>(selectSql + whereSql, search);
 
