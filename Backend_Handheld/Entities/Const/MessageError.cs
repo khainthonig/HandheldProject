@@ -10,6 +10,7 @@
         public const string PostImageError = "Image is not available";
 
         public const string UserNotExist = "User does not exist";
+        public const string UserExist = "User had haven exist";
         public const string IncorrectPassword = "Incorrect password";
 
     }

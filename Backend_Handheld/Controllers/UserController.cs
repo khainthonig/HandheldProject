@@ -30,6 +30,9 @@ namespace Backend_Handheld.Controllers
         {
             try
             {
+                var username = createUserDto.Username;
+                var userExist = await _serviceManager.UserService.GetByUsername(username);
+                if (userExist != null) return BadRequest(MessageError.UserExist);
                 var result = await _serviceManager.UserService.Create(createUserDto);
                 if (result)
                 {
