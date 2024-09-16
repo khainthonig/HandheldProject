@@ -86,7 +86,7 @@ namespace Backend_Handheld.Controllers
             {
                 return BadRequest("Failed to create result.");
             }
-            return Ok("File uploaded to Cloudinary and result created successfully.");
+            return Ok(resultDto);
         }
 
 
