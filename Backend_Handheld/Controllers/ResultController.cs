@@ -88,6 +88,27 @@ namespace Backend_Handheld.Controllers
             }
             return Ok(resultDto);
         }
+        [HttpPost("search")]
+        public async Task<IActionResult> Search(ResultSearchDto searchDto)
+        {
+            var userId = searchDto.UserId;
+            var user = new Entities.DataTransferObjects.User.UserDto();
+            if (userId != null)
+            {
+                user = await _serviceManager.UserService.GetById((int)userId);
+            }
+            if (user.Role == (int)RoleUser.OPERATOR)
+            {
+                searchDto.UserId = userId;
+            }
+            else
+            {
+                searchDto.UserId = null;
+            }
+            var result = await _serviceManager.ResultService.Search(searchDto);
+            if (result == null) return BadRequest("No data");
+            return Ok(result);
+        }
 
 
         [HttpPost("search-by-condition")]

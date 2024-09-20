@@ -9,6 +9,7 @@ using CloudinaryDotNet.Actions;
 using HandheldProject.Entities.Const;
 using HandheldProject.Entities.DataTransferObjects.Results;
 using Mapster;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Net;
 
@@ -56,12 +57,7 @@ namespace Backend_Handheld.Services
             return resultDto;
         }
 
-        public async Task<List<ResultDto>> Search(ResultSearchDto search)
-        {
-            var result = await _repositoryManager.ResultRepository.Search(search);
-            var resultDto = result.Adapt<List<ResultDto>>();
-            return await FilterData(resultDto);
-        }
+
         public async Task<List<ResultDto>> FilterData(List<ResultDto> lst)
         {
             if (lst?.Count() > 0)
@@ -135,6 +131,33 @@ namespace Backend_Handheld.Services
                 return false;
             }
         }
+        public async Task<List<ResultDto>> Search(ResultSearchDto search)
+        {
+            var result = await _repositoryManager.ResultRepository.Search(search);
+            var resultDtos = await FilterData(result.Adapt<List<ResultDto>>());
+            if (search.UserId != null)
+            {
+                resultDtos = resultDtos.Where(r => r.UserId == search.UserId).ToList();
+            }
+            if (search.CreatedDate != null)
+            {
+                var classifications = await GetClassifications();
+                resultDtos = resultDtos.Where(r =>
+                    r.CreatedDate.Date.ToString("yyyy-MM-dd") == search.CreatedDate.Value.Date.ToString("yyyy-MM-dd")
+                ).ToList();
+            }
+            if (search.ClassificationId != null)
+            {
+                resultDtos = resultDtos.Where(r =>
+                                             r.ClassificationId == search.ClassificationId).Distinct().Adapt<List<ResultDto>>();
+            }
+            if (search.Status != null)
+            {           
+                resultDtos = resultDtos.Where(r => r.Status == search.Status).Adapt<List<ResultDto>>();
+            }
+
+            return resultDtos;
+        }
 
         public async Task<ResultConditionDto> GetListByCondition(ResultSearchDto search)
         {
@@ -161,6 +184,7 @@ namespace Backend_Handheld.Services
                     classifications.TryGetValue(int.Parse(id), out var name) ? name : "undefined")
                     .ToList();
             }
+
             //if (search.Year != null)
             //{
             //    lst.Results = result.Where(r => r.CreatedDate.Year == search.Year
